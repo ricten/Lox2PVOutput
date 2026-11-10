@@ -1,0 +1,55 @@
+#!/usr/bin/php
+<?php
+/**
+ * Healthcheck fuer die LoxBerry-Healthcheck-Seite ("Mein LoxBerry" > "Healthcheck").
+ * Aufruf: "healthcheck title" (nur die Beschreibung) oder "healthcheck check" (Pruefung, Ausgabe als JSON).
+ * Statuscodes: 3 Fehler (Benachrichtigung und E-Mail), 4 Warnung, 5 OK, 6 Info.
+ * Der Dienst schreibt seinen Zustand jede Sekunde nach /dev/shm/<Ordner>/status.json; hier wird nur gelesen.
+ * Muss schnell sein und darf nichts anderes ausgeben als das JSON.
+ */
+date_default_timezone_set('Europe/Berlin');     // PHP auf dem LoxBerry laeuft auf UTC
+$desc = 'Lox2PVOutput: Dienst, MQTT-Broker und Upload zu pvoutput.org';
+$arg = $argv[1] ?? '';
+if ($arg === 'title') {
+    echo $desc, "\n";
+    exit(0);
+}
+if ($arg !== 'check') {
+    exit(0);
+}
+
+$dev = getenv('PVO_DEV_DIR');
+$run = getenv('PVO_DEV_RUN') ?: ($dev ? $dev . '/run' : '/dev/shm/REPLACELBPPLUGINDIR');
+$log = $dev ? $dev . '/pvoutput.log' : 'REPLACELBPLOGDIR/pvoutput.log';
+
+function ergebnis(string $desc, int $status, string $text, string $log): void
+{
+    $o = ['desc' => $desc, 'status' => $status, 'result' => trim((string)preg_replace('/\s+/', ' ', $text))];
+    if (is_file($log)) {
+        $o['logfile'] = $log;           // nur mit echtem Wert, sonst fuehrt der Knopf ins Leere
+    }
+    echo json_encode($o, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), "\n";
+    exit(0);
+}
+
+$st = is_file("$run/status.json") ? json_decode((string)@file_get_contents("$run/status.json"), true) : null;
+if (!is_array($st) || time() - (int)($st['time'] ?? 0) > 60) {
+    ergebnis($desc, 3, 'Der Dienst läuft nicht (keine aktuelle Statusmeldung). Der Wächter startet ihn spätestens nach einer Minute neu; sonst im Plugin den Reiter „Test“ und die Logdatei ansehen.', $log);
+}
+if (empty($st['mqtt'])) {
+    ergebnis($desc, 4, 'Keine Verbindung zum MQTT-Broker: ' . ($st['mqtt_error'] ?? 'unbekannt'), $log);
+}
+if (empty($st['aktiv'])) {
+    ergebnis($desc, 6, 'Der Upload zu pvoutput.org ist ausgeschaltet (Plugin öffnen, Reiter „Einstellungen“).', $log);
+}
+if (empty($st['zugang'])) {
+    ergebnis($desc, 4, 'API-Key oder System-ID fehlt (Plugin öffnen, Reiter „Einstellungen“).', $log);
+}
+$up = is_array($st['upload'] ?? null) ? $st['upload'] : [];
+if (($up['ok'] ?? null) === false) {
+    ergebnis($desc, 4, 'Der letzte Upload ist fehlgeschlagen: ' . ($up['meldung'] ?? 'unbekannter Fehler'), $log);
+}
+if (empty($up['ts'])) {
+    ergebnis($desc, 5, 'In Ordnung, seit dem Start des Dienstes noch kein Upload (der erste folgt zum nächsten Sendeintervall), Version ' . ($st['version'] ?? '?'), $log);
+}
+ergebnis($desc, 5, 'Letzter Upload um ' . date('H:i', (int)$up['ts']) . ' Uhr erfolgreich, Version ' . ($st['version'] ?? '?'), $log);
