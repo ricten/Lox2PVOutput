@@ -1,0 +1,165 @@
+====== Lox2PVOutput ======
+
+===== Plugin-Daten =====
+
+^ Autor | Rico Tengler |
+^ Logo | {{:plugins:lox2pvoutput:lox2pvoutput.png?64|Lox2PVOutput}} |
+^ Status | BETA |
+^ Version | 0.5.0 |
+^ Min. LB Version | 4.0 (benötigt PHP 8.4) |
+^ Release Download | [[https://github.com/ricten/Lox2PVOutput/releases/latest|GitHub Releases (aktuelle Version)]] \\ [[https://github.com/ricten/Lox2PVOutput/releases/download/v0.5.0/lox2pvoutput-0.5.0.zip|lox2pvoutput-0.5.0.zip]] |
+^ Pre-Release Download | - |
+^ Quellcode | [[https://github.com/ricten/Lox2PVOutput|github.com/ricten/Lox2PVOutput]] (MIT-Lizenz) |
+^ Beschreibung | Sammelt Messwerte aus MQTT-Topics (Fronius2Lox, Senec2Lox, Werte aus dem Miniserver oder beliebige Topics) und lädt sie in festem Takt zu pvoutput.org hoch. Ersatz für den ioBroker-Adapter pvoutputorg. |
+^ Sprachen | DE |
+^ Diskussion | FORUM-LINK-EINTRAGEN |
+
+----
+
+===== 1. Überblick =====
+
+**Lox2PVOutput** liest Werte vom **MQTT-Broker** des LoxBerry (Erzeugung, Verbrauch, Temperatur …) und sendet sie alle 5, 10 oder 15 Minuten mit der Schnittstelle //addstatus.jsp// an **[[https://pvoutput.org|pvoutput.org]]**.
+
+  Quelle (Fronius2Lox, Senec2Lox, Miniserver, ...)  ->  MQTT-Broker  ->  Lox2PVOutput (LoxBerry)  ->  pvoutput.org
+
+Eigenschaften:
+
+  * PVOutput-Felder **v1–v6** und die erweiterten Felder **v7–v12**
+  * Pro Feld wählt man in einer **Liste die Quelle**: Fronius2Lox, Senec2Lox, Loxone (virtueller Ausgang) oder ein eigenes MQTT-Topic, dazu einen **Faktor**
+  * **Gerätenummern werden erkannt:** Fronius nummeriert Geräte selbst (z. B. Wechselrichter ''15'' statt ''1''); Name und Nummern liest das Plugin aus den Topics von Fronius2Lox und bietet sie als Auswahl an
+  * **Tagesenergie** wird aus der Leistung berechnet (Summe seit Mitternacht), wenn die Quelle keinen Tageswert liefert; alternativ Tageswert oder Gesamtzähler
+  * Veraltete Werte werden nicht gesendet; Fehlermeldungen von PVOutput im Klartext
+  * MQTT-Broker des LoxBerry **oder eigener Broker**
+  * Lebenszeichen (''pvoutput/status/ok'', ''zaehler'', ''ts''), Autostart, Watchdog, Healthcheck
+
+===== 2. Installation =====
+
+  - ZIP von der Release-Seite herunterladen.
+  - LoxBerry → **Plugin-Verwaltung** → **Plugin installieren**. Die Installation startet den Dienst.
+  - Plugin **Lox2PVOutput** öffnen, API-Key und System-ID von pvoutput.org eintragen, Quellen der Werte prüfen, **Werte an pvoutput.org senden** anhaken, speichern.
+  - Reiter **Test** → **PVOutput-Zugang prüfen** (schreibt nichts).
+  - Zum nächsten vollen Intervall (z. B. :00, :05, :10 …) erscheint der erste Datensatz bei PVOutput.
+
+==== 2.1 Update ====
+
+Als Update installieren. Konfiguration und Daten (auch die Tagesenergie) bleiben erhalten.
+
+**Automatische Updates:** Ab Version 0.5.0 liefert Lox2PVOutput eine ''release.cfg'' im GitHub-Repository mit. Neue Installationen stehen in der Plugin-Verwaltung bei „Automatische Updates“ auf //Releases//: LoxBerry prüft täglich und installiert neuere Versionen selbst. Bei einer bereits installierten Version einmal von Hand auf 0.5.0 (oder neuer) aktualisieren, danach lässt sich die Einstellung (//Aus//, //Benachrichtigen//, //Releases//) in der Plugin-Verwaltung ändern.
+
+**Immer das neueste Release:** [[https://github.com/ricten/Lox2PVOutput/releases/latest/download/lox2pvoutput.zip|lox2pvoutput.zip]] (ZIP ohne Version im Dateinamen, zeigt immer auf die aktuelle Version).
+
+==== 2.2 Deinstallation ====
+
+Plugin entfernen. Dienst und RAM-Daten werden gelöscht. Bereits bei PVOutput gespeicherte Daten bleiben dort.
+
+===== 3. Konfiguration (LoxBerry) =====
+
+Reiter: **Einstellungen · MQTT · Einbindung in Loxone · Test · Logdateien**. Änderungen wirken ohne Neustart; jeder Reiter speichert nur seine eigenen Einstellungen.
+
+==== 3.1 PVOutput ====
+
+^ Einstellung ^ Standard ^ Beschreibung ^
+| Werte an pvoutput.org senden | aus | Hauptschalter. Aus: Das Plugin sammelt Werte, sendet aber nichts |
+| API-Key | - | Von pvoutput.org (//Settings → API Settings//). Wird nie angezeigt; ein leeres Feld behält den gespeicherten Key |
+| System-ID | - | Nummer des Systems bei PVOutput (//Registered Systems//) |
+| Sendeintervall | 5 min | 5, 10 oder 15 Minuten; muss zum **Status Interval** der PVOutput-Systemeinstellungen passen |
+| Werte gültig für | 900 s | Ältere Werte werden nicht gesendet und zählen bei der Energieberechnung nicht mit |
+
+Gesendet wird zur vollen Zeit. Nach dem Start geht der erste Upload erst zum nächsten Zeitpunkt. Das kostenlose PVOutput-Konto erlaubt höchstens 60 Anfragen pro Stunde (5 min = 12 pro Stunde).
+
+==== 3.2 Quellen und Gerätenummern ====
+
+^ Einstellung ^ Standard ^ Beschreibung ^
+| Fronius2Lox: Name des Wechselrichters | wr1 | Name aus den Fronius2Lox-Einstellungen (Topic ''fronius/<Name>/…''). Sobald Topics von Fronius2Lox gesehen wurden, eine Auswahlliste |
+| Fronius2Lox: Nummer Wechselrichter, Smart Meter, OhmPilot, Sensorkarte | automatisch | Fronius vergibt die Nummern selbst (z. B. Wechselrichter 15). //automatisch// oder eine erkannte Nummer wählen |
+| Senec2Lox: Topic-Präfix | senec | Topic ''<Präfix>/live/…'' |
+
+Das Plugin abonniert dazu ''fronius/+/wr/+/leistung_ac_w'' usw., merkt sich Namen und Nummern (auch über die Nacht und Neustarts) und baut daraus die Topics der Auswahlfelder. Solange nichts erkannt wurde, gelten die Standardnummern (Wechselrichter 1, Smart Meter 0, OhmPilot 0, Sensorkarte 1).
+
+==== 3.3 Felder ====
+
+Bei jedem Feld die Quelle in einer Liste wählen. Die Liste zeigt nur Werte, die zum Feld passen. Das fertige Topic steht in der Spalte „Verwendetes Topic“, „Aktuell“ zeigt den letzten Wert.
+
+^ Feld ^ PVOutput ^ Einheit ^ Standard ^
+| v1 Erzeugung Energie | Energie | Wh | aus der Leistung berechnen |
+| v2 Erzeugung Leistung | Leistung | W | Senec2Lox: PV-Leistung |
+| v3 Verbrauch Energie | Energie | Wh | aus der Leistung berechnen |
+| v4 Verbrauch Leistung | Leistung | W | Senec2Lox: Hausverbrauch |
+| v5 Temperatur | Wert | °C | nicht senden |
+| v6 Spannung | Wert | V | nicht senden |
+| v7–v12 Erweitert | Wert | - | nicht senden (nur mit Spenden-Konto) |
+
+Mindestens eines von v1–v4 muss einen Wert haben, sonst wird nichts gesendet. **Faktor:** Wert × Faktor ergibt die PVOutput-Einheit (kW → W: 1000). Leistung und Energie werden nie negativ gesendet.
+
+Energiefelder (v1/v3): //aus der Leistung berechnen// (Summe seit Mitternacht, übersteht Neustarts), //Tageswert// oder //Gesamtzähler// einer Quelle (PVOutput bildet dann die Tagessumme, Flag ''c1''). Ein Fronius Symo liefert //Erzeugung heute//, ein GEN24 nur //Erzeugung gesamt//; Senec2Lox liefert keine Energiewerte.
+
+==== 3.4 MQTT-Broker (Reiter MQTT) ====
+
+Oben zeigt ein farbiges Feld das **Gateway-Abo** (grün ab einem passenden Abo, rot nur ohne Abo).
+
+^ Einstellung ^ Standard ^ Beschreibung ^
+| Eigenen MQTT-Broker verwenden | aus | Aus: Broker des LoxBerry (Zugangsdaten verwaltet LoxBerry) |
+| Host/IP, Port | - / 1883 | Eigener Broker (ohne TLS) |
+| Benutzer, Passwort | leer | Optional; das Passwort wird nie angezeigt oder geloggt |
+
+==== 3.5 Test und Logdateien ====
+
+^ Aktion ^ Wirkung ^
+| PVOutput-Zugang prüfen | Liest den letzten Status von PVOutput, schreibt nichts |
+| Aktuelle Werte | Je Feld Topic, Rohwert, Alter und der Wert, der gesendet würde |
+| Selbstprüfung | Zugangsdaten, Topics, PVOutput, Broker, Gateway-Abo, Dienst, frische Werte |
+| Dienst neu starten | Beendet und startet den Dienst |
+
+Der Loglevel wird in der LoxBerry-Plugin-Verwaltung eingestellt.
+
+===== 4. MQTT-Topics (Referenz) =====
+
+Das Plugin **liest** die eingestellten Topics und **veröffentlicht** nur diese (reine Zahlen bzw. Text, nicht retained):
+
+^ Topic ^ Bedeutung ^
+| ''pvoutput/status/ok'' | Zugang vorhanden und letzter Upload erfolgreich (1/0); der Broker setzt 0, wenn der Dienst abbricht |
+| ''pvoutput/status/zaehler'' | Lebenszeichen 0–999, alle 10 s |
+| ''pvoutput/status/ts'' | Zeitstempel des letzten Lebenszeichens |
+| ''pvoutput/upload/ok'' | Letzter Upload erfolgreich (1/0) |
+| ''pvoutput/upload/ts'' | Zeitpunkt des letzten Uploads |
+| ''pvoutput/upload/meldung'' | Antwort von PVOutput oder Fehlertext |
+| ''pvoutput/energie/erzeugung_wh'', ''verbrauch_wh'' | Berechnete Energie seit Mitternacht (nur bei „aus der Leistung berechnen“) |
+
+===== 5. Miniserver Anbindung =====
+
+==== 5.1 MQTT-Gateway ====
+
+Das Abonnement ''pvoutput/#'' trägt das Plugin nur beim **Gateway V1** selbst ein. Das **Gateway V2** liest die Abo-Datei von Plugins nicht: Dort ''pvoutput/#'' **von Hand** im MQTT Gateway unter Abonnements eintragen (das Plugin prüft es im Reiter MQTT). ''pvoutput/status/ok'' und ''pvoutput/status/zaehler'' im Gateway auf **No Cache** stellen. Das Gateway ersetzt ''/'' durch ''_'': ''pvoutput/status/ok'' wird zum Eingang ''pvoutput_status_ok''.
+
+==== 5.2 Werte aus dem Miniserver an PVOutput ====
+
+Liegt ein Wert nur im Miniserver (Außentemperatur, Zählerstand …), schickt ihn ein **virtueller Ausgang** an das MQTT-Gateway: Adresse ''/dev/udp/<LoxBerry-IP>/<UDP-Port>'' (Standard 11884, steht im Plugin im Reiter „Einbindung in Loxone“), Befehl bei EIN ''publish loxone/pvoutput/temperatur_c <v>'' (ohne HTTP-Header/Body). Beim Feld die Quelle //Loxone (virtueller Ausgang)// wählen. Jedes Feld hat einen festen Eingang ''loxone/pvoutput/<Name>''; die Tabelle samt fertigem Befehl zeigt das Plugin im Reiter //Einbindung in Loxone//. Den Ausgang zyklisch senden lassen, weil Werte nur „Werte gültig für“ Sekunden zählen. Einheiten im Wert (''21,5 °C'') werden ignoriert, aber nicht umgerechnet; dafür den Faktor nutzen.
+
+===== 6. Tipps & Tricks =====
+
+  * Wer nur die Leistung hat, nutzt //aus der Leistung berechnen//; ein Tageswert oder Zähler des Geräts ist genauer.
+  * Läuft noch der ioBroker-Adapter für dasselbe System, wird das Stundenlimit (60 Anfragen) schnell erreicht: den Adapter abschalten.
+  * ''pvoutput_status_zaehler'' im Miniserver überwachen: bleibt er stehen, läuft der Dienst nicht mehr.
+
+===== 7. FAQ / Troubleshooting =====
+
+^ Symptom ^ Ursache / Lösung ^
+| Nichts erscheint bei PVOutput | //Werte an pvoutput.org senden// angehakt? API-Key und System-ID eingetragen? Erster Upload erst zum nächsten vollen Intervall |
+| „API-Key oder System-ID ungültig (401)“ | Key oder ID falsch kopiert oder von einem anderen System |
+| „PVOutput antwortet 403 … Exceeded number of requests“ | Stundenlimit erreicht (kostenlos: 60). Intervall erhöhen, andere Sender abschalten |
+| „Keine aktuellen Werte (v1-v4)“ | Topics liefern nichts oder nur Altes: unter //Aktuelle Werte// nachsehen, „Werte gültig für“ erhöhen |
+| Fronius-Felder zeigen „kein Wert“ | Gateway-Abo ''fronius/#'' (Reiter MQTT) und Name/Nummer des Wechselrichters in den Quellen prüfen; die Auswahlliste zeigt, was auf dem Broker gesehen wurde |
+| Wert aus Loxone kommt nicht an | Befehl und UDP-Port des virtuellen Ausgangs prüfen, Ausgang zyklisch senden; //Aktuelle Werte// zeigt das Alter |
+| Werte um Faktor 1000 daneben | Faktor setzen (kW → W: 1000) |
+
+Weitere Hinweise: [[https://github.com/ricten/Lox2PVOutput/blob/main/docs/wiki/Fehlersuche.md|Fehlersuche im Repository]].
+
+===== 8. Changelog =====
+
+^ Version ^ Änderung ^
+| 0.5.0 | Weboberfläche im LoxBerry Design System, automatische Updates (release.cfg), ZIP ohne Version für einen festen Download-Link |
+| 0.4.0 | Gerätenummern (z. B. Wechselrichter 15) und Name werden aus den Fronius2Lox-Topics erkannt, Auswahllisten in den Quellen |
+| 0.3.2 | Healthcheck, Menüleiste, Gateway-Abo-Prüfung (farbiges Feld), Loglevel-Auswahl, UDP-Port aus der Konfiguration |
+| 0.3.0 | Werte aus dem Miniserver (Quelle //Loxone (virtueller Ausgang)//), Dezimalkomma und Einheiten im Wert |
+| 0.2.0 | Quelle je Feld per Auswahlliste (Fronius2Lox, Senec2Lox, eigenes Topic), Betriebsart der Energiefelder |
+| 0.1.0 | Erste Version |

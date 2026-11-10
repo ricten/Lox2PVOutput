@@ -9,13 +9,15 @@ Was auf dem MQTT-Broker des LoxBerry liegt, kann gesendet werden: Werte von Sene
 ## Was kann das Plugin?
 
 - Sendet alle 5, 10 oder 15 Minuten (zur vollen Zeit) die PVOutput-Felder **v1–v6** und die erweiterten Felder **v7–v12**
-- Bei jedem Feld wählt man in einer **Liste die Quelle** (Fronius2Lox, Senec2Lox oder ein eigenes MQTT-Topic) und den passenden Wert, dazu einen **Faktor** (z. B. 1000 bei kW → W)
+- Bei jedem Feld wählt man in einer **Liste die Quelle** (Fronius2Lox, Senec2Lox, Loxone-Ausgang oder ein eigenes MQTT-Topic) und den passenden Wert, dazu einen **Faktor** (z. B. 1000 bei kW → W)
+- **Gerätenummern werden erkannt:** Fronius vergibt Nummern selbst (z. B. Wechselrichter `15` statt `1`). Name und Nummern liest das Plugin aus den Topics von Fronius2Lox und bietet sie als Auswahl an
 - **Tagesenergie wird aus der Leistung berechnet** (Summe seit Mitternacht), wenn die Quelle keinen Tageswert liefert; alternativ Tageswert oder Gesamtzähler aus einem Topic
 - Veraltete Werte werden nicht gesendet; negative Leistung wird als 0 gesendet
 - Fehlerbehandlung mit Klartext von PVOutput (ungültiger Zugang, Limit erreicht …), automatische Wiederholung bei Netzfehlern
 - MQTT-Broker des LoxBerry oder **eigener Broker**
 - Lebenszeichen `pvoutput/status/ok|zaehler|ts` für die Ausfallerkennung in Loxone
 - Weboberfläche mit Einstellungen, MQTT-Reiter, Topic-Tabelle, Zugangsprüfung ohne Schreiben, Selbstprüfung und Log
+- Healthcheck für die LoxBerry-Healthcheck-Seite und automatische Updates über die Plugin-Verwaltung (siehe [Installation](Installation.md))
 
 ## Seiten
 
