@@ -1,7 +1,7 @@
 # Lox2PVOutput – LoxBerry-Plugin
 <img src="docs/logo/logo_loxberry.png" alt="Lox2PVOutput Logo" width="128">
 
-**Version 0.4.0** · Benötigt LoxBerry 4 (PHP ≥ 8.4) · [Changelog](CHANGELOG.md)
+**Version 0.5.0** · Benötigt LoxBerry 4 (PHP ≥ 8.4) · [Changelog](CHANGELOG.md)
 
 Dokumentation: [docs/wiki/Home.md](docs/wiki/Home.md)
 
@@ -12,6 +12,8 @@ Liest Messwerte aus MQTT-Topics (z. B. von Senec2Lox, über den LoxBerry-Broker 
 2. In LoxBerry → Plugin-Verwaltung → ZIP installieren.
 3. Plugin öffnen, Reiter „Einstellungen“: API-Key und System-ID von pvoutput.org eintragen, Topics der Messwerte prüfen, „Werte an pvoutput.org senden“ aktivieren, speichern.
 4. Reiter „Test“ → „PVOutput-Zugang prüfen“ und „Selbstprüfung“.
+
+**Immer das neueste Release:** `https://github.com/ricten/Lox2PVOutput/releases/latest/download/lox2pvoutput.zip` (ZIP ohne Version im Namen). **Automatische Updates:** Neue Installationen stehen in der Plugin-Verwaltung auf „Releases“, LoxBerry prüft täglich die `release.cfg` im Repository und installiert neuere Versionen selbst (Details: [docs/wiki/Installation.md](docs/wiki/Installation.md)).
 
 ## Felder
 | PVOutput | Bedeutung | Quelle |

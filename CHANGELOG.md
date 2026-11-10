@@ -8,6 +8,20 @@ Release-Ablauf: Version in `lox2pvoutput/plugin.cfg` und `lox2pvoutput/bin/lib/A
 
 ## [Unveröffentlicht]
 
+## [0.5.0] – 2026-11-10
+
+### Neu
+- **ZIP ohne Version im Namen** (`<name>.zip`) an jedem Release: `…/releases/latest/download/<name>.zip` zeigt immer auf das neueste Release (`bash build.sh` erzeugt beide ZIPs).
+- **Automatische Updates:** `plugin.cfg` enthält jetzt `RELEASECFG` (`release.cfg` im GitHub-Repo) und `AUTOMATIC_UPDATES=true`. Neue Installationen bekommen damit automatische Release-Updates; die Einstellung lässt sich in der Plugin-Verwaltung ändern. Bereits installierte Versionen bekommen den Eintrag erst durch das Installieren von 0.5.0. `bash build.sh release-cfg` erzeugt die `release.cfg` (erst nach dem GitHub-Release).
+
+### Behoben
+- `plugin.cfg` hat jetzt `WEBSITE` (Repository auf GitHub): In der LoxBerry-Plugin-Verwaltung ist der Knopf „Dokumentation“ nicht mehr ausgegraut.
+
+### Geändert
+- Die Weboberfläche nutzt das **LoxBerry Design System** (`lb-*`-Klassen, `lbheader(…, true)`) statt jQuery Mobile: Formularzeilen, Schalter, Tabellen und Hinweiskästen folgen dem gewählten LoxBerry-Theme (auch dunkel). Felder, Namen und Speichern-Verhalten sind unverändert. Das Aussehen auf dem LoxBerry ist nicht lokal prüfbar.
+- Das Gateway-Abo-Feld (MQTT-Reiter) nimmt seine Farben aus dem Design System.
+- Doku: Seitenlinks in `docs/wiki/` funktionieren im Repository (mit `.md`), Abschnitt „Automatische Updates“ in `Installation.md` und `README.md`.
+
 ## [0.4.0] – 2026-11-10
 
 ### Neu

@@ -578,6 +578,10 @@ file_put_contents($hcDir . '/pvoutput.log', "x\n");
 check('Healthcheck: mit Logdatei der Pfad', $res($basis)[0]['logfile'] ?? null, $hcDir . '/pvoutput.log');
 check('Healthcheck: Ausgabe ist genau eine JSON-Zeile', substr_count(rtrim($hc('check', $basis)[0], "\n"), "\n"), 0);
 
+check('plugin.cfg: WEBSITE gesetzt (sonst ist der Dokumentation-Knopf der Plugin-Verwaltung ausgegraut)', str_contains((string)file_get_contents($root . '/lox2pvoutput/plugin.cfg'), "
+WEBSITE=https://github.com/ricten/Lox2PVOutput
+"), true);
+
 // ---------------------------------------------------------------- Weboberflaeche mit Attrappen der LoxBerry-Bibliotheken
 // Rendert jeden Reiter (ohne echtes LoxBerry): findet undefinierte Variablen, Syntax- und Laufzeitfehler und prueft Menueleiste,
 // Gateway-Abo und UDP-Port. Nicht pruefbar: das echte Aussehen in LoxBerry.
@@ -615,15 +619,18 @@ foreach (['einstellungen', 'mqtt', 'loxone', 'test', 'logs'] as $tab) {
     check("UI $tab: genau ein aktiver Eintrag, und zwar dieser", array_values(array_filter($nav, fn($n) => !empty($n['active'])))[0]['URL'] ?? null, '?tab=' . $tab);
     check("UI $tab: nur ein aktiver Eintrag", count(array_filter($nav, fn($n) => !empty($n['active']))), 1);
     check("UI $tab: kein eigener Tab-Block mehr", str_contains($o, '-tabs"'), false);
+    check("UI $tab: Design System (nojqm gesetzt, lb-content, kein data-role/pvo-chk)", [str_contains($o, '<!--NOJQM:1-->'), str_contains($o, 'class="lb-content'), str_contains($o, 'data-role='), str_contains($o, 'pvo-chk')], [true, true, false, false]);
 }
 // Geraete aus den Topics: ohne Funde Eingabefelder, mit Funden Auswahllisten
 @unlink("$uiDir/dev/entdeckt.json");
 [$o, $e] = $uiPage('einstellungen');
-check('UI Einstellungen: ohne erkannte Geraete Eingabefelder', [$bad($o, $e), str_contains($o, '<input type="text" name="quellen[fronius_name]"'), str_contains($o, '<input type="text" name="quellen[fronius_wr]"')], [false, true, true]);
+check('UI Einstellungen: Formular im Design System (lb-input, lb-select, lb-toggle, lb-btn, lb-table)', [str_contains($o, 'class="lb-input"'), str_contains($o, 'class="lb-select"'), str_contains($o, 'class="lb-toggle"'), str_contains($o, 'lb-btn lb-btn-primary'), str_contains($o, 'class="lb-table"')], [true, true, true, true, true]);
+check('UI Einstellungen: Felder behalten ihre Namen (token, aktiv, apikey, felder)', [str_contains($o, 'name="token"'), str_contains($o, 'name="aktiv"'), str_contains($o, 'name="apikey"'), str_contains($o, 'name="felder[v1][auswahl]"'), str_contains($o, 'name="felder[v1][faktor]"')], [true, true, true, true, true]);
+check('UI Einstellungen: ohne erkannte Geraete Eingabefelder', [$bad($o, $e), str_contains($o, '<input class="lb-input" type="text" name="quellen[fronius_name]"'), str_contains($o, '<input class="lb-input" type="text" name="quellen[fronius_wr]"')], [false, true, true]);
 file_put_contents("$uiDir/dev/entdeckt.json", json_encode(['namen' => ['symo' => 1000, 'garage' => 1000], 'geraete' => ['wr1' => ['wr' => ['1' => 1000]], 'symo' => ['wr' => ['15' => 1000]]]]));
 [$o, $e] = $uiPage('einstellungen');
-check('UI Einstellungen: Name als Auswahl aus den erkannten Topics', [$bad($o, $e), str_contains($o, '<select name="quellen[fronius_name]">'), str_contains($o, '<option value="symo"'), str_contains($o, '<option value="garage"'), str_contains($o, 'wr1 (nicht erkannt)')], [false, true, true, true, true]);
-check('UI Einstellungen: Nummer als Auswahl mit automatisch', [str_contains($o, '<select name="quellen[fronius_wr]">'), str_contains($o, 'automatisch (aktuell 1)'), str_contains($o, '<option value="15">15</option>')], [true, true, false]);
+check('UI Einstellungen: Name als Auswahl aus den erkannten Topics', [$bad($o, $e), str_contains($o, '<select class="lb-select" name="quellen[fronius_name]"'), str_contains($o, '<option value="symo"'), str_contains($o, '<option value="garage"'), str_contains($o, 'wr1 (nicht erkannt)')], [false, true, true, true, true]);
+check('UI Einstellungen: Nummer als Auswahl mit automatisch', [str_contains($o, '<select class="lb-select" name="quellen[fronius_wr]"'), str_contains($o, 'automatisch (aktuell 1)'), str_contains($o, '<option value="15">15</option>')], [true, true, false]);
 @unlink("$uiDir/dev/entdeckt.json");
 [$o] = $uiPage('mqtt', ['STUB_UDP' => '12345']);
 check('UI mqtt: Gateway V2, Abo fehlt, mit Anleitung', str_contains($o, 'Gateway V2: Das Abo „pvoutput/#“ fehlt'), true);

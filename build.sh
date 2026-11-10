@@ -11,6 +11,28 @@ if ! grep -q "^## \[$VER\]" CHANGELOG.md; then
     echo "CHANGELOG.md hat keinen Eintrag fuer Version $VER" >&2
     exit 1
 fi
+REPO="ricten/Lox2PVOutput"
+if [ "${1:-}" = "release-cfg" ]; then
+    # release.cfg fuer die automatischen Updates von LoxBerry (liegt im Repo-Wurzelordner, nicht im ZIP).
+    # Erst ausfuehren und committen, wenn das GitHub-Release v$VER mit dem ZIP schon existiert.
+    cat > release.cfg <<EOF
+[AUTOUPDATE]
+# Diese Datei liest LoxBerry (RELEASECFG in plugin.cfg), wenn automatische Updates eingeschaltet sind.
+# Sie wird mit "bash build.sh release-cfg" erzeugt - erst nach dem GitHub-Release, nie vorher.
+
+# Version des neuen Releases
+VERSION=$VER
+
+# Direkter Download des ZIP (Release-Anhang auf GitHub)
+ARCHIVEURL=https://github.com/$REPO/releases/download/v$VER/lox2pvoutput-$VER.zip
+
+# Seite mit Hinweisen zu diesem Release
+INFOURL=https://github.com/$REPO/releases/tag/v$VER
+EOF
+    sed -i 's/\r$//' release.cfg
+    echo "release.cfg fuer Version $VER geschrieben"
+    exit 0
+fi
 for c in Util Logger MqttClient GatewayInfo; do
     [ -f "../common/php/$c.php" ] || { echo "../common/php/$c.php fehlt" >&2; exit 1; }
 done
@@ -64,4 +86,11 @@ with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
         z.writestr(info, data)
 PYEOF
 rm -rf build
+if [ -f release.cfg ]; then
+    RVER="$(grep '^VERSION=' release.cfg | cut -d= -f2 | tr -d '\r')"
+    [ "$RVER" = "$VER" ] || echo "Hinweis: release.cfg zeigt auf Version $RVER, plugin.cfg hat $VER (nach dem GitHub-Release: bash build.sh release-cfg)" >&2
+fi
+# Zusaetzlich ein ZIP ohne Version im Namen: https://github.com/ricten/<Repo>/releases/latest/download/lox2pvoutput.zip zeigt dann immer auf das neueste Release
+cp -f "$OUT" "$PWD/lox2pvoutput.zip"
 echo "$OUT"
+echo "$PWD/lox2pvoutput.zip"
