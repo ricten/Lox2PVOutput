@@ -6,7 +6,7 @@ Konfiguration, Referenz, Miniserver-Anbindung, FAQ, Changelog).
 
 ## Vor dem Einstellen anpassen
 
-- `FORUM-LINK-EINTRAGEN`: Link zum Forenbeitrag des Plugins.
+- Der Link zum Forenbeitrag steht schon in der Zeile „Diskussion“ der Plugin-Daten (bei einem neuen Beitrag dort anpassen).
 - Bild `plugins:lox2pvoutput:lox2pvoutput.png`: Datei `docs/logo/lox2pvoutput.png` im Medien-Manager des Wikis hochladen
   (Namensraum `plugins:lox2pvoutput`).
 - Das Feld **Status** („BETA“) und **Min. LB Version** („4.0“) prüfen. Die Version steht in `lox2pvoutput/plugin.cfg`.

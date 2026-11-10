@@ -12,7 +12,7 @@
 ^ Quellcode | [[https://github.com/ricten/Lox2PVOutput|github.com/ricten/Lox2PVOutput]] (MIT-Lizenz) |
 ^ Beschreibung | Sammelt Messwerte aus MQTT-Topics (Fronius2Lox, Senec2Lox, Werte aus dem Miniserver oder beliebige Topics) und lädt sie in festem Takt zu pvoutput.org hoch. Ersatz für den ioBroker-Adapter pvoutputorg. |
 ^ Sprachen | DE |
-^ Diskussion | FORUM-LINK-EINTRAGEN |
+^ Diskussion | https://www.loxforum.com/forum/projektforen/loxberry/plugins/494958-loxberry-plugin-lox2pvoutput-%E2%80%93-messwerte-aus-mqtt-zu-pvoutput-org |
 
 ----
 
