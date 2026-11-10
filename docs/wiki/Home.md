@@ -1,6 +1,6 @@
 # Lox2PVOutput
 
-![Logo](../logo/logo_loxberry.png)
+![Logo](../logo/lox2pvoutput.png)
 
 **Lox2PVOutput** ist ein LoxBerry-Plugin, das Messwerte aus **MQTT-Topics** (Erzeugung, Verbrauch, Temperatur …) sammelt und in festem Takt zu **[pvoutput.org](https://pvoutput.org)** hochlädt. Es ersetzt den ioBroker-Adapter `pvoutputorg`.
 

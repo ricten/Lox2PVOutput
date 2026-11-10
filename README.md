@@ -1,5 +1,5 @@
 # Lox2PVOutput – LoxBerry-Plugin
-<img src="docs/logo/logo_loxberry.png" alt="Lox2PVOutput Logo" width="128">
+<img src="docs/logo/lox2pvoutput.png" alt="Lox2PVOutput Logo" width="128">
 
 **Version 0.5.0** · Benötigt LoxBerry 4 (PHP ≥ 8.4) · [Changelog](CHANGELOG.md)
 
