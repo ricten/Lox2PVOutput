@@ -13,7 +13,7 @@ Ergebnis: `lox2pvoutput-<version>.zip` (enthält nur den Inhalt von `lox2pvoutpu
 1. LoxBerry-Oberfläche → **Plugin-Verwaltung** → **Plugin installieren**.
 2. ZIP hochladen und installieren. Die Installation startet den Dienst.
 3. Plugin **Lox2PVOutput** öffnen.
-4. API-Key und System-ID eintragen, Topics prüfen, **Werte an pvoutput.org senden** anhaken, **Speichern** (siehe [Konfiguration](Konfiguration)).
+4. API-Key und System-ID eintragen, Topics prüfen, **Werte an pvoutput.org senden** anhaken, **Speichern** (siehe [Konfiguration](Konfiguration.md)).
 5. Reiter **Test** → **PVOutput-Zugang prüfen**.
 6. Zum nächsten vollen Intervall (z. B. :00, :05, :10 …) erscheint der erste Datensatz bei PVOutput.
 

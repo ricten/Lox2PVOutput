@@ -20,7 +20,7 @@ Für jedes PVOutput-Feld wählt man in **einer Liste** („Quelle und Wert“), 
 
 - **Fronius2Lox** – z. B. *PV-Leistung*, *Hausverbrauch*, *Erzeugung heute*, *Wechselrichter: AC-Spannung*, *Sensorkarte: Kanal 0*
 - **Senec2Lox** – z. B. *PV-Leistung*, *Hausverbrauch*, *Batterie: höchste Temperatur*
-- **Loxone (virtueller Ausgang)** – ein fester Eingang je Feld (z. B. `loxone/pvoutput/temperatur_c`), den ein virtueller Ausgang im Miniserver befüllt; Anleitung unter [Loxone-Anbindung](Loxone-Anbindung)
+- **Loxone (virtueller Ausgang)** – ein fester Eingang je Feld (z. B. `loxone/pvoutput/temperatur_c`), den ein virtueller Ausgang im Miniserver befüllt; Anleitung unter [Loxone-Anbindung](Loxone-Anbindung.md)
 - **Eigenes MQTT-Topic** – jedes andere Topic (genau ein Topic, keine Platzhalter `+`/`#`), im Feld „Eigenes Topic“ einzutragen
 - **nicht senden**
 
