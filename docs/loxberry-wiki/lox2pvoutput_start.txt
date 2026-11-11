@@ -6,8 +6,8 @@
 ^ Logo | {{:plugins:lox2pvoutput:lox2pvoutput.png?64|Lox2PVOutput}} |
 ^ Status | BETA |
 ^ Version | 0.5.1 |
-^ Min. LB Version | 4.0 (benötigt PHP 8.2 oder neuer) |
-^ Release Download | [[https://github.com/ricten/Lox2PVOutput/releases/latest|GitHub Releases (aktuelle Version)]] \\ [[https://github.com/ricten/Lox2PVOutput/releases/download/v0.5.1/lox2pvoutput-0.5.1.zip|lox2pvoutput-0.5.1.zip]] |
+^ Min. LB Version | 4.0.0.0 |
+^ Release Download | https://github.com/ricten/Lox2PVOutput/releases/latest/download/lox2pvoutput.zip |
 ^ Pre-Release Download | - |
 ^ Quellcode | [[https://github.com/ricten/Lox2PVOutput|github.com/ricten/Lox2PVOutput]] (MIT-Lizenz) |
 ^ Beschreibung | Sammelt Messwerte aus MQTT-Topics (Fronius2Lox, Senec2Lox, Werte aus dem Miniserver oder beliebige Topics) und lädt sie in festem Takt zu pvoutput.org hoch. Ersatz für den ioBroker-Adapter pvoutputorg. |
