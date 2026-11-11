@@ -5,7 +5,7 @@
 ^ Autor | Rico Tengler |
 ^ Logo | {{:plugins:lox2pvoutput:lox2pvoutput.png?64|Lox2PVOutput}} |
 ^ Status | BETA |
-^ Version | 0.5.1 |
+^ Version | 0.5.2 |
 ^ Min. LB Version | 4.0.0.0 |
 ^ Release Download | https://github.com/ricten/Lox2PVOutput/releases/latest/download/lox2pvoutput.zip |
 ^ Pre-Release Download | - |
@@ -157,6 +157,7 @@ Weitere Hinweise: [[https://github.com/ricten/Lox2PVOutput/blob/main/docs/wiki/F
 ===== 8. Changelog =====
 
 ^ Version ^ Änderung ^
+| 0.5.2 | Installation und Update prüfen PHP 8.2 oder neuer und brechen sonst mit einer klaren Meldung ab (statt HTTP 500 in der Weboberfläche) |
 | 0.5.1 | Läuft auch mit PHP 8.2 und 8.3 (bisher PHP 8.4 nötig) |
 | 0.5.0 | Weboberfläche im LoxBerry Design System, automatische Updates (release.cfg), ZIP ohne Version für einen festen Download-Link |
 | 0.4.0 | Gerätenummern (z. B. Wechselrichter 15) und Name werden aus den Fronius2Lox-Topics erkannt, Auswahllisten in den Quellen |
