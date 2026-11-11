@@ -6,7 +6,7 @@
  */
 final class PvoClient
 {
-    public const string BASE = 'https://pvoutput.org/service/r2/';
+    public const BASE = 'https://pvoutput.org/service/r2/';
 
     private string $base;
 

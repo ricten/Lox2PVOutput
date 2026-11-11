@@ -31,7 +31,7 @@ Was auf dem MQTT-Broker des LoxBerry liegt, kann gesendet werden: Werte von Sene
 ## Voraussetzungen
 
 - LoxBerry ≥ 4.0 mit aktivem MQTT-Broker (Mosquitto) – oder eigener Broker
-- PHP ≥ 8.4 (CLI + Web, ist bei LoxBerry 4 dabei)
+- PHP ≥ 8.2 (CLI + Web, ist bei LoxBerry 4 dabei)
 - Ein Konto bei pvoutput.org mit angelegtem System (**API-Key** und **System-ID**)
 - Ausgehender Zugriff auf `https://pvoutput.org` (Port 443)
 

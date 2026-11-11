@@ -20,7 +20,7 @@
 final class PvoConfig
 {
     /** Schluessel => [Bezeichnung, Einheit, Art]. Art: energie | leistung | wert */
-    public const array FELDER = [
+    public const FELDER = [
         'v1' => ['Erzeugung Energie', 'Wh', 'energie'],
         'v2' => ['Erzeugung Leistung', 'W', 'leistung'],
         'v3' => ['Verbrauch Energie', 'Wh', 'energie'],
@@ -36,26 +36,26 @@ final class PvoConfig
     ];
 
     /** Betriebsarten der Energiefelder v1/v3. */
-    public const array MODI = [
+    public const MODI = [
         'aus' => 'nicht senden',
         'integral' => 'aus der Leistung berechnen (Tagessumme)',
         'topic' => 'Tageswert aus Topic (Wh seit Mitternacht)',
         'zaehler' => 'Gesamtzähler aus Topic (Wh, ewig steigend)',
     ];
 
-    public const array INTERVALLE = [5, 10, 15];
+    public const INTERVALLE = [5, 10, 15];
 
     /** Quellen: Schluessel => Bezeichnung. Die Topics der Quellen stehen im Katalog unten. */
-    public const array QUELLEN = ['fronius' => 'Fronius2Lox', 'senec2lox' => 'Senec2Lox', 'loxone' => 'Loxone (virtueller Ausgang)'];
+    public const QUELLEN = ['fronius' => 'Fronius2Lox', 'senec2lox' => 'Senec2Lox', 'loxone' => 'Loxone (virtueller Ausgang)'];
 
     /** Eingangs-Topics fuer Werte aus Loxone: loxone/pvoutput/<Name>. Der Miniserver schreibt sie per UDP-Befehl ins MQTT-Gateway. */
-    public const string LOXONE_PRAEFIX = 'loxone/pvoutput/';
+    public const LOXONE_PRAEFIX = 'loxone/pvoutput/';
 
     /**
      * Welche Katalog-Arten ein Feld annimmt. leistung = W, tag = Wh seit Mitternacht, zaehler = Wh gesamt (steigend),
      * temp = Grad C, spannung = V, sonst = alles Weitere (nur fuer die erweiterten Felder v7-v12 sinnvoll).
      */
-    public const array ARTEN = [
+    public const ARTEN = [
         'v1' => ['tag', 'zaehler'], 'v3' => ['tag', 'zaehler'],
         'v2' => ['leistung'], 'v4' => ['leistung'],
         'v5' => ['temp'], 'v6' => ['spannung'],
@@ -66,7 +66,7 @@ final class PvoConfig
      * [Topic relativ zur Quelle, Bezeichnung, Art]. Fronius2Lox: fronius/<Geraetename>/<Pfad>; Senec2Lox: <Praefix>/live/<Pfad>.
      * Nummern im Pfad (wr/1, zaehler/0 ...) gelten fuer das erste Geraet; andere Geraete ueber "eigenes Topic".
      */
-    public const array KATALOG = [
+    public const KATALOG = [
         // Fronius2Lox
         'fronius:pv_w' => ['pv_w', 'PV-Leistung (W)', 'leistung'],
         'fronius:wr_leistung' => ['wr/{wr}/leistung_ac_w', 'Wechselrichter: AC-Leistung (W)', 'leistung'],
@@ -195,7 +195,7 @@ final class PvoConfig
      * Geraete mit Nummer im Fronius2Lox-Topic: Art => [Bezeichnung, Standardnummer, Topic-Endung zum Erkennen].
      * Der Wechselrichter hat die Nummer, die Fronius ihm gibt (z. B. 15, nicht immer 1); das Plugin liest sie aus den Topics.
      */
-    public const array NUMMERN = [
+    public const NUMMERN = [
         'wr' => ['Wechselrichter', '1', 'leistung_ac_w'],
         'zaehler' => ['Smart Meter', '0', 'leistung_w'],
         'ohmpilot' => ['OhmPilot', '0', 'leistung_w'],

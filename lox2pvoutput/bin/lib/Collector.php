@@ -11,7 +11,7 @@
 final class Collector
 {
     /** Energiefeld => zugehoeriges Leistungsfeld */
-    private const array LEISTUNG = ['v1' => 'v2', 'v3' => 'v4'];
+    private const LEISTUNG = ['v1' => 'v2', 'v3' => 'v4'];
 
     /** @var array<string,array{0:float,1:int}> topic => [roher Wert, Zeitpunkt] */
     private array $vals = [];
