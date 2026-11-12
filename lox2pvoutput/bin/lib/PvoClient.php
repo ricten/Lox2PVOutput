@@ -10,8 +10,13 @@ final class PvoClient
 
     private string $base;
 
-    public function __construct(private readonly string $apikey, private readonly string $systemid, ?string $base = null)
+    private string $apikey;
+    private string $systemid;
+
+    public function __construct(string $apikey, string $systemid, ?string $base = null)
     {
+        $this->apikey = $apikey;
+        $this->systemid = $systemid;
         $b = $base ?? (getenv('PVO_DEV_URL') ?: self::BASE);       // PVO_DEV_URL nur fuer Tests
         $this->base = rtrim($b, '/') . '/';
     }

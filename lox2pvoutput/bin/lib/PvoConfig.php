@@ -356,11 +356,10 @@ final class PvoConfig
         if ($energie && in_array($f['modus'], ['integral', 'aus'], true)) {
             return $f['modus'];
         }
-        return match ($f['quelle']) {
-            'topic' => $energie ? ($f['modus'] === 'zaehler' ? 'eigen_zaehler' : 'eigen_tag') : 'eigen',
-            'aus' => 'aus',
-            default => (string)$f['wert'],
-        };
+        if ($f['quelle'] === 'topic') {
+            return $energie ? ($f['modus'] === 'zaehler' ? 'eigen_zaehler' : 'eigen_tag') : 'eigen';
+        }
+        return $f['quelle'] === 'aus' ? 'aus' : (string)$f['wert'];
     }
 
     /**
@@ -462,11 +461,10 @@ final class PvoConfig
         if (!isset($f['modus'])) {
             return $f['topic'] !== '';
         }
-        return match ($f['modus']) {
-            'integral' => $cfg['felder'][$k === 'v1' ? 'v2' : 'v4']['topic'] !== '',
-            'topic', 'zaehler' => $f['topic'] !== '',
-            default => false,
-        };
+        if ($f['modus'] === 'integral') {
+            return $cfg['felder'][$k === 'v1' ? 'v2' : 'v4']['topic'] !== '';
+        }
+        return in_array($f['modus'], ['topic', 'zaehler'], true) && $f['topic'] !== '';
     }
 
     /** Sind API-Key und System-ID vorhanden? */
